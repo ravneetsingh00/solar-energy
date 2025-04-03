@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Energy Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #007bff;
+            --dark-bg: #222;
+            --light-bg: #333;
+            --text-color: #fff;
+            --heading-font: "Zilla Slab Highlight", serif;
+            --body-font: Arial, sans-serif;
+            --accent-color: #ffc107;
+        }
+
+        body {
+            font-family: var(--body-font);
+            text-align: center;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        /* Header Styles */
+        h1 {
+            font-family: var(--heading-font);
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+        }
+
+        .designer-line {
+            height: 5px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            margin-bottom: 3rem;
+        }
+
+        /* Section Styles */
+        section,
+        .card,
+        .alerts-folder,
+        .insights-section,
+        .contact-form {
+            margin-bottom: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        section h2,
+        .card h2,
+        .alerts-folder h2,
+        .insights-section h2,
+        .contact-form h2 {
+            font-family: var(--heading-font);
+            font-size: 2.5rem;
+            color: var(--text-color);
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 0.75rem;
+        }
+
+        section p,
+        .card p,
+        .alerts-folder p,
+        .insights-section p,
+        .contact-form p {
+            font-size: 1.2rem;
+            color: #ddd;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #4a6572;
+        }
+
+        /* Chart Styles */
+        canvas {
+            max-width: 100%;
+            margin: 2rem auto;
+            background-color: #444;
+            padding: 20px;
+            border-radius: 8px;
+            height: 400px;
+        }
+
+        /* Alert Styles */
+        .alerts-folder {
+            background-color: #7f5a58;
+            text-align: left;
+        }
+
+        .alert-message {
+            background-color: rgba(255, 255, 0, 0.2);
+            color: var(--text-color);
+            padding: 1rem;
+            margin: 0.75rem 0;
+            border-radius: 6px;
+        }
+
+        /* Insights Section */
+        .insights-section {
+            background-color: #6a89cc;
+        }
+
+        #consumptionInsights {
+            color: #eee;
+            font-size: 1.2rem;
+        }
+
+        /* Form Styles */
+        .contact-form {
+            background-color: #556b2f;
+        }
+
+        .contact-form label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: #ccc;
+            font-weight: bold;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid #555;
+            background-color: #444;
+            color: var(--text-color);
+            border-radius: 6px;
+            font-size: 1.1rem;
+        }
+
+        .contact-form button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .contact-form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #111;
+            padding: 1.2rem;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #444;
+            font-size: 1.1rem;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            section h2,
+            .card h2 {
+                font-size: 2rem;
+            }
+
+            section p {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Video Styles */
+        video {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 1.2rem;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Image Styles */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.2rem;
+        }
+
+        /* List Styles */
+        .solar-types ul {
+            list-style-type: disc;
+            padding-left: 25px;
+            text-align: left;
+        }
+
+        .solar-types li {
+            font-size: 1.1rem;
+            color: #eee;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Introduction Section */
+        .solar-types {
+            background-color: #333;
+        }
+
+        .card {
+            padding: 2rem 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>TRANSFORMERS SOLAR ENERGY SITE</h1>
+    <div class="designer-line"></div>
+
+    <div class="container">
+        <section class="solar-types">
+            <h2>INTRODUCTION OF SOLAR ENERGY</h2>
+            <img src="solar1.jpg" alt="Solar Panel Type 1">
+            <video autoplay muted loop width="100%">
+                <source src="solar_types.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+            <p><strong>How Solar Panels Work:</strong></p>
+            <ul>
+                <li><strong>Absorption of Sunlight:</strong> Solar panels are made up of photovoltaic (PV) cells that absorb sunlight.</li>
+                <li><strong>Photovoltaic Effect:</strong> When sunlight hits the PV cells, it excites electrons in the semiconductor material (usually silicon), causing them to move.</li>
+                <li><strong>Electric Current Generation:</strong> The movement of these electrons generates an electric current, which is captured by the panel’s wiring.</li>
+                <li><strong>Direct Current (DC):</strong> The generated electricity is in the form of direct current (DC).</li>
+                <li><strong>Inverter:</strong> The DC electricity is then converted into alternating current (AC) by an inverter, which is the type of electricity used in homes and businesses.</li>
+                <li><strong>Powering Devices:</strong> The AC electricity is supplied to electrical appliances and systems, or it can be stored in batteries for later use.</li>
+            </ul>
+            <p><strong>Solar panels essentially convert sunlight into usable electricity through this process! 🌞</strong></p>
+        </section>
+
+        <div class="card">
+            <h2>Solar Energy Monitoring Dashboard</h2>
+        </div>
+
+        <div class="card">
+            <h2>Real-time Solar Energy Output</h2>
+            <canvas id="energyChart"></canvas>
+        </div>
+
+        <section class="advantages">
+            <h2>Advantages of Solar Energy</h2>
+            <p>Renewable, cost-saving, and eco-friendly.</p>
+            <video autoplay muted loop width="100%">
+                <source src="solar_advantages.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </section>
+
+        <div class="card">
+            <h2>Solar Energy vs Fossil Fuels - Environmental Impact</h2>
+            <canvas id="impactChart"></canvas>
+        </div>
+
+        <section class="installation">
+            <h2>Installation Process</h2>
+            <video autoplay muted loop width="100%">
+                <source src="solar_installation.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </section>
+
+        <div class="alerts-folder">
+            <h2>Alerts</h2>
+            <div id="alertMessages"></div>
+        </div>
+
+        <div class="insights-section">
+            <h2>AI-Driven Consumption Insights</h2>
+            <div id="consumptionInsights"></div>
+        </div>
+
+        <div class="card">
+            <h2>Buy Solar Panel</h2>
+            <label for="area">Enter Area (sq ft):</label>
+            <input type="number" id="area" min="1">
+            <br><br>
+            <label for="panelType">Select Panel Type:</label>
+            <select id="panelType">
+                <option value="5000">100W Panel - ₹5000</option>
+                <option value="9000">200W Panel - ₹9000</option>
+                <option value="13000">300W Panel - ₹13000</option>
+            </select>
+            <br><br>
+            <label for="fitting">Include Fitting?</label>
+            <input type="checkbox" id="fitting">
+            <br><br>
+            <button onclick="calculatePrice()">Calculate Price</button>
+            <p id="totalPrice"></p>
+        </div>
+
+        <div class="card">
+            <h2>Smart Microgrid Management</h2>
+            <label>Energy Demand (W):</label>
+            <input type="number" id="energyDemand">
+            <br><br>
+            <label>Solar Output (W):</label>
+            <input type="number" id="solarOutput">
+            <br><br>
+            <button onclick="balanceLoad()">Balance Load</button>
+            <p id="gridStatus"></p>
+        </div>
+
+        <div class="contact-form">
+            <h2>Contact Us</h2>
+            <form id="contactForm" action="https://formspree.io/f/mjkyeddy" method="POST">
+                <label for="name">Your Name:</label>
+                <input type="text" id="name" name="name" required>
+                <br><br>
+                <label for="email">Your Email:</label>
+                <input type="email" id="email" name="email" required>
+                <br><br>
+                <label for="message">Your Message:</label>
+                <textarea id="message" name="message" required></textarea>
+                <br><br>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Solar Solutions. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // EmailJS Initialization
+        emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS user ID
+
+        // Energy Output Chart with Real-time Simulation
+        const energyCtx = document.getElementById('energyChart').getContext('2d');
+        const energyChart = new Chart(energyCtx, {
+            type: 'line',
+            data: {
+                labels: ['Now'],
+                datasets: [{
+                    label: 'Energy Output (W)',
+                    data: [0],
+                    borderColor: 'blue',
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Environmental Impact Chart with Static Data
+        const impactCtx = document.getElementById('impactChart').getContext('2d');
+        const impactChart = new Chart(impactCtx, {
+            type: 'bar',
+            data: {
+                labels: ['CO₂ Emissions (g/kWh)', 'Water Usage (L/kWh)', 'Land Use (m²/MWh)'],
+                datasets: [{
+                        label: 'Coal',
+                        data: [1000, 500, 15],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                    },
+                    {
+                        label: 'Natural Gas',
+                        data: [500, 300, 10],
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)'
+                    },
+                    {
+                        label: 'Solar',
+                        data: [50, 5, 8],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Simulate Real-time Energy Output
+        function updateEnergyOutput() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            let energy = 0;
+
+            if (currentHour >= 10 && currentHour <= 16) {
+                energy = Math.floor(Math.random() * 800);
+            } else {
+                energy = Math.floor(Math.random() * 200);
+            }
+
+            energyChart.data.datasets[0].data = [energy];
+            energyChart.data.labels = ['Now'];
+            energyChart.update();
+
+            // Simulate alerts
+            if (energy < 100) {
+                showAlert("Low energy output detected!");
+            }
+            if (energy > 700) {
+                showAlert("High energy output detected!");
+            }
+        }
+
+        // Update every 5 seconds
+        setInterval(updateEnergyOutput, 5000);
+        updateEnergyOutput(); // Initial update
+
+        // Calculate Price Function
+        function calculatePrice() {
+            const area = document.getElementById('area').value;
+            const panelPrice = parseInt(document.getElementById('panelType').value);
+            const fitting = document.getElementById('fitting').checked;
+
+            if (area <= 0) {
+                document.getElementById('totalPrice').textContent = "Please enter a valid area.";
+                return;
+            }
+
+            let totalPrice = panelPrice * (area / 100); // Assuming 100 sq ft coverage per panel
+            if (fitting) {
+                totalPrice += 2000; // Adding fitting cost
+            }
+
+            document.getElementById('totalPrice').textContent = "Total Price: ₹" + totalPrice;
+        }
+
+        // Balance Load Function
+        function balanceLoad() {
+            const demand = parseInt(document.getElementById('energyDemand').value);
+            const output = parseInt(document.getElementById('solarOutput').value);
+
+            if (isNaN(demand) || isNaN(output)) {
+                document.getElementById('gridStatus').textContent = "Please enter valid numbers.";
+                return;
+            }
+
+            if (output >= demand) {
+                document.getElementById('gridStatus').textContent = "Solar output sufficient.";
+            } else {
+                document.getElementById('gridStatus').textContent = "Grid assistance needed.";
+            }
+        }
+
+        // Show Alert Function
+        function showAlert(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert-message';
+            alertDiv.textContent = message;
+            document.getElementById('alertMessages').appendChild(alertDiv);
+
+            // EmailJS send email for alerts
+            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                    message: message
+                })
+                .then(function(response) {
+                    console.log("SUCCESS!", response.status, response.text);
+                }, function(error) {
+                    console.log("FAILED...", error);
+                });
+        }
+    </script>
+</body>
+
+</html>
